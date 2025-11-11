@@ -14,6 +14,7 @@ FROM php:8.2-apache AS backend
 
 # Install system dependencies and PHP extensions (PostgreSQL for Render)
 ENV DEBIAN_FRONTEND=noninteractive
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -41,10 +42,13 @@ WORKDIR /var/www/html
 
 # Optimize Composer layer caching
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction --no-ansi --optimize-autoloader
+RUN composer install --no-dev --prefer-dist --no-interaction --no-ansi --optimize-autoloader --no-scripts
 
 # Copy application code
 COPY . .
+
+# Run composer scripts now that artisan exists
+RUN composer dump-autoload --optimize && php artisan package:discover --ansi
 
 # Copy built frontend from Stage 1 (Vite outputs to public/build)
 COPY --from=frontend /app/public/build ./public/build
