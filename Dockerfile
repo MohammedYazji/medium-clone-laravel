@@ -27,7 +27,7 @@ RUN set -eux; \
         pkg-config \
         autoconf make g++; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    docker-php-ext-install -j"$(nproc)" pdo pdo_pgsql mbstring zip gd; \
+    docker-php-ext-install -j"$(nproc)" pdo pdo_pgsql mbstring zip gd exif; \
     apt-get clean; rm -rf /var/lib/apt/lists/*
 
 # Enable Apache rewrite and set DocumentRoot to /public
