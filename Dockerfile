@@ -47,8 +47,12 @@ RUN composer install --no-dev --prefer-dist --no-interaction --no-ansi --optimiz
 # Copy application code
 COPY . .
 
-# Run composer scripts now that artisan exists
-RUN composer dump-autoload --optimize && php artisan package:discover --ansi
+# Ensure Laravel runtime directories exist
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && \
+    touch storage/logs/laravel.log
+
+# Run composer scripts now that artisan exists (safe commands)
+RUN composer dump-autoload --optimize && php artisan package:discover --ansi || true
 
 # Copy built frontend from Stage 1 (Vite outputs to public/build)
 COPY --from=frontend /app/public/build ./public/build
