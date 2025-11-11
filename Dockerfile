@@ -22,6 +22,7 @@ RUN set -eux; \
         libpng-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
+        libonig-dev \
         libpq-dev \
         pkg-config \
         autoconf make g++; \
