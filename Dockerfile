@@ -13,11 +13,21 @@ RUN npm run build
 FROM php:8.2-apache AS backend
 
 # Install system dependencies and PHP extensions (PostgreSQL for Render)
-RUN apt-get update && apt-get install -y \
-    git curl unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libpq-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_pgsql mbstring zip gd \
-    && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        git curl unzip \
+        libzip-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+        libpq-dev \
+        pkg-config \
+        autoconf make g++; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" pdo pdo_pgsql mbstring zip gd; \
+    apt-get clean; rm -rf /var/lib/apt/lists/*
 
 # Enable Apache rewrite and set DocumentRoot to /public
 RUN a2enmod rewrite && \
