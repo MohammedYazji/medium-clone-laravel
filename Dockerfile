@@ -48,7 +48,7 @@ RUN composer install --no-dev --prefer-dist --no-interaction --no-ansi --optimiz
 COPY . .
 
 # Ensure Laravel runtime directories exist
-RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && \
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache storage/logs && \
     touch storage/logs/laravel.log
 
 # Run composer scripts now that artisan exists (safe commands)
